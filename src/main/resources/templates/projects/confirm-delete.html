@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head"></head>
+<body>
+
+<div th:replace="fragments :: header"></div>
+
+<div class="container mt-4">
+    <h2 class="text-center">Xác nhận Xóa Dự án</h2>
+    <p>Bạn có chắc chắn muốn xóa dự án "<span th:text="${project.projectName}"></span>" không?</p>
+
+    <form th:action="@{/projects/delete/{id}(id=${project.id})}" method="post">
+        <button type="submit" class="btn btn-danger">Xác nhận Xóa</button>
+        <a class="btn btn-secondary" th:href="@{/projects}">Quay lại</a>
+    </form>
+</div>
+
+<div th:replace="fragments :: footer"></div>
+
+</body>
+</html>

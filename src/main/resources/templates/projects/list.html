@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head"></head>
+<body>
+
+<div th:replace="fragments :: header"></div>
+
+<div class="container mt-4">
+    <h2 class="text-center">Danh sách Dự án</h2>
+
+    <!-- Form tìm kiếm -->
+    <form th:action="@{/projects}" method="get" class="row g-3">
+        <div class="col-md-4">
+            <label for="projectName" class="form-label">Tên dự án</label>
+            <input type="text" class="form-control" id="projectName" name="projectName" th:value="${projectName}">
+        </div>
+        <div class="col-md-4">
+            <label for="difficulty" class="form-label">Độ khó</label>
+            <select class="form-control" id="difficulty" name="difficulty">
+                <option value="">Tất cả</option>
+                <option value="Dễ" th:selected="${difficulty == 'Dễ'}">Dễ</option>
+                <option value="Trung bình" th:selected="${difficulty == 'Trung bình'}">Trung bình</option>
+                <option value="Khó" th:selected="${difficulty == 'Khó'}">Khó</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="departmentId" class="form-label">Phòng ban</label>
+            <select class="form-select" id="departmentId" name="departmentId">
+                <option value="">Tất cả</option>
+                <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.departmentName}" th:selected="${departmentId == dept.id}"></option>
+            </select>
+        </div>
+        <div class="col-12 d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+            <a class="btn btn-secondary ms-2" th:href="@{/projects}">Reset</a>
+        </div>
+    </form>
+
+    <a class="btn btn-primary mb-3 mt-3" th:href="@{/projects/create}">Thêm Dự án</a>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên Dự án</th>
+            <th>Độ Khó</th>
+            <th>Phòng Ban</th>
+            <th>Ngày Tạo</th>
+            <th>Ngày Cập Nhật</th>
+            <th>Version</th>
+            <th>Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="project : ${projects.content}">
+            <td th:text="${project.id}"></td>
+            <td th:text="${project.projectName}"></td>
+            <td th:text="${project.difficulty}"></td>
+            <td th:text="${project.department.departmentName}"></td>
+            <td th:text="${#temporals.format(project.createdAt, 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${#temporals.format(project.updatedAt, 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${project.version}"></td>
+            <td>
+                <a class="btn btn-warning btn-sm" th:href="@{/projects/update/{id}(id=${project.id})}">Sửa</a>
+                <a class="btn btn-danger btn-sm" th:href="@{/projects/delete/confirm/{id}(id=${project.id})}">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${projects.first ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/projects(page=${projects.number - 1}, projectName=${projectName}, difficulty=${difficulty}, departmentId=${departmentId})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, projects.totalPages - 1)}" th:classappend="${projects.number == i ? 'active' : ''}">
+                <a class="page-link" th:href="@{/projects(page=${i}, projectName=${projectName}, difficulty=${difficulty}, departmentId=${departmentId})}" th:text="${i + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${projects.last ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/projects(page=${projects.number + 1}, projectName=${projectName}, difficulty=${difficulty}, departmentId=${departmentId})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<div th:replace="fragments :: footer"></div>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head"></head>
+<body>
+
+<div th:replace="fragments :: header"></div>
+
+<div class="container mt-4">
+    <h2 class="text-center">Xác nhận tạo dự án</h2>
+
+    <p><strong>ID:</strong> <span th:text="${project.id}"></span></p>
+    <p><strong>Tên Dự án:</strong> <span th:text="${project.projectName}"></span></p>
+    <p><strong>Độ Khó:</strong> <span th:text="${project.difficulty}"></span></p>
+    <p><strong>Version:</strong> <span th:text="${project.version}"></span></p>
+    <p><strong>Phòng Ban:</strong> <span th:text="${project.department.departmentName}"></span></p>
+
+    <form th:action="@{/projects/create}" method="post" th:object="${project}">
+        <input type="hidden" th:field="*{id}" />
+        <input type="hidden" th:field="*{projectName}" />
+        <input type="hidden" th:field="*{difficulty}" />
+        <input type="hidden" th:field="*{version}" />
+        <input type="hidden" th:field="*{department.id}" />
+
+        <button type="submit" class="btn btn-primary">Xác nhận Lưu</button>
+        <a class="btn btn-secondary" th:href="@{/projects/create}">Quay lại</a>
+    </form>
+</div>
+
+<div th:replace="fragments :: footer"></div>
+
+</body>
+</html>
