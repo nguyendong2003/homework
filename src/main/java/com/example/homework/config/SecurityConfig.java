@@ -1,21 +1,18 @@
 package com.example.homework.config;
 
-import com.example.homework.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
-    private final UserDetailsServiceImpl userDetailsService;
+    private final CustomerUserDetailsService userDetailsService;
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
+    public SecurityConfig(CustomerUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
@@ -28,14 +25,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/", "/login", "/register", "/home").permitAll()
+                        .requestMatchers("/projects/create/**", "/projects/update/**", "/projects/delete/**").hasRole("ADMIN")
+                        .requestMatchers("/projects").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
-                        .defaultSuccessUrl("/home", true)
+//                        .defaultSuccessUrl("/home", true)
+                        .defaultSuccessUrl("/projects", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -47,7 +45,12 @@ public class SecurityConfig {
                 )
                 .rememberMe(rememberMe -> rememberMe
                         .key("uniqueAndSecret")
+                        .rememberMeCookieName("remember-me")
                         .tokenValiditySeconds(86400)
+                        .userDetailsService(userDetailsService)
+                )
+                .exceptionHandling(ex -> ex
+                        .accessDeniedPage("/error/403")
                 );
 
         return http.build();

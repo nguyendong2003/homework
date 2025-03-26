@@ -1,4 +1,4 @@
-package com.example.homework.service.impl;
+package com.example.homework.config;
 
 import com.example.homework.model.User;
 import com.example.homework.repository.UserRepository;
@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class CustomerUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public CustomerUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
